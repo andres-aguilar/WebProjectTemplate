@@ -1,6 +1,15 @@
 const gulp = require('gulp');
 const browserSync = require('browser-sync');
 const sass = require('gulp-sass');
+const pug = require('gulp-pug');
+
+/* Compile Jade/Pug */
+gulp.task('views', () => {
+  return gulp.src('src/views/*.pug')
+  .pipe(pug({pretty: true}))
+  .pipe(gulp.dest('dist'))
+  .pipe(browserSync.stream());
+});
 
 /* Compile SASS */
 gulp.task('sass', () => {
@@ -8,10 +17,8 @@ gulp.task('sass', () => {
       'node_modules/bootstrap/scss/bootstrap.scss',
       'src/scss/*.scss'
     ])
-    .pipe(sass({
-      outputStyle: 'compressed'
-    }))
-    .pipe(gulp.dest('public/assets/css'))
+    .pipe(sass({outputStyle: 'compressed'}))
+    .pipe(gulp.dest('dist/assets/css'))
     .pipe(browserSync.stream());
 });
 
@@ -23,34 +30,18 @@ gulp.task('js', () => {
     'node_modules/popper.js/dist/umd/popper.min.js',
     'src/scripts/*.js'
   ])
-  .pipe(gulp.dest('public/assets/js'))
+  .pipe(gulp.dest('dist/assets/js'))
   .pipe(browserSync.stream());
 });
 
 /* Sync browser */
 gulp.task('serve', ['sass'], () => {
-  browserSync.init({
-    server: './public'
-  });
+  browserSync.init({server: './dist'});
 
-  gulp.watch([
-    'node_modules/bootstrap/scss/bootstrap.min.scss',
-    'src/scss/*.scss'
-  ], ['sass']);
-
-  gulp.watch('public/*.html').on('change', browserSync.reload);
+  // Watch for changes in pug and sass files
+  gulp.watch(['src/scss/*.scss'], ['sass']);
+  gulp.watch(['src/views/*.pug'], ['views']);
 
 });
 
-// Font awesome
-gulp.task('fa', () => {
-  return gulp.src('node_modules/font-awesome/css/font-awesome.min.css')
-  .pipe(gulp.dest('public/assets/css'));
-})
-// Font awesome fonts
-gulp.task('fonts', () => {
-  return gulp.src('node_modules/font-awesome/fonts/*')
-    .pipe(gulp.dest('public/assets/fonts'));
-});
-
-gulp.task('default', ['js', 'serve', 'fa', 'fonts'])
+gulp.task('default', ['views', 'js', 'serve', 'sass'])
