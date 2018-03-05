@@ -5,7 +5,7 @@ const pug = require('gulp-pug');
 
 /* Compile Jade/Pug */
 gulp.task('views', () => {
-  return gulp.src('src/views/*.pug')
+  return gulp.src(['src/views/*.pug', 'src/views/includes/*.pug'])
   .pipe(pug({pretty: true}))
   .pipe(gulp.dest('dist'))
   .pipe(browserSync.stream());
@@ -34,14 +34,21 @@ gulp.task('js', () => {
   .pipe(browserSync.stream());
 });
 
+/* Changes on static folder */
+gulp.task('static', () => {
+  return gulp.src(['src/static/*.*'])
+  .pipe(gulp.dest('dist'))
+  .pipe(browserSync.stream());
+});
+
 /* Sync browser */
 gulp.task('serve', ['sass'], () => {
   browserSync.init({server: './dist'});
 
   // Watch for changes in pug and sass files
   gulp.watch(['src/scss/*.scss'], ['sass']);
-  gulp.watch(['src/views/*.pug'], ['views']);
+  gulp.watch(['src/views/*.pug', 'src/views/includes/*.pug'], ['views']);
 
 });
 
-gulp.task('default', ['views', 'js', 'serve', 'sass'])
+gulp.task('default', ['views', 'js', 'serve', 'sass', 'static'])
