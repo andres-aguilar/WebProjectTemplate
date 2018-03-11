@@ -1,0 +1,11 @@
+/* Colors */
+
+$colors: (
+  white: #fff,
+  black: #000
+);
+
+@each $name,$color in $colors {
+  .#{$name} {background-color: $color;}
+  .#{$name}-text {color: $color;}
+}
