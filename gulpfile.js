@@ -39,8 +39,9 @@ gulp.task('static', () => {
 gulp.task('serve', ['sass'], () => {
   browserSync.init({server: './dist'});
 
-  // Watch for changes in pug and sass files
+  // Watch for changes in pug, js and sass files
   gulp.watch(['src/scss/*.scss'], ['sass']);
+  gulp.watch(['src/scripts/*.js'], ['js']);
   gulp.watch(['src/views/*.pug', 'src/views/includes/*.pug'], ['views']);
 
 });
